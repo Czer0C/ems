@@ -19,8 +19,7 @@ export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private ordersRepository: Repository<Order>,
-    @Inject('KAFKA_SERVICE')
-    private kafkaClient: ClientKafka,
+    @Inject('KAFKA_SERVICE') private readonly kafkaClient: ClientKafka
   ) {}
 
   async create(orderData: Partial<Order>): Promise<Order> {

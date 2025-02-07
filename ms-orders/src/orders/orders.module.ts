@@ -10,4 +10,5 @@ import { KafkaModule } from 'src/kafka/kafka.module';
   controllers: [OrdersController],
   providers: [OrdersService],
 })
+
 export class OrdersModule {}
