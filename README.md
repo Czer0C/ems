@@ -94,3 +94,9 @@ This setup defines a microservices architecture using Docker Compose, including 
 - Environment variables are configured for database connections.
 - All microservices communicate internally via Docker network.
 
+## **TODO**:
+- Implement an API Gateway to handle external requests and route them to the appropriate services.
+- gRPC for communication between microservices. 
+- Implement Service Discovery: Use Consul or Eureka to enable dynamic service discovery.
+- Set up Monitoring and Logging: Prometheus and Grafana for monitoring. Set up the ELK stack for centralized logging.
+- CI/CD Integration: Automate testing and deployment using Jenkins or GitLab CI.
