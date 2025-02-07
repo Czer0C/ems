@@ -1,0 +1,131 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespostgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@localhost.com
+      PGADMIN_DEFAULT_PASSWORD: 123456
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
+  redis:
+    image: redis:6
+    restart: always
+    ports:
+      - "6379:6379"
+
+  # Zookeeper (Kafka Dependency)
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    restart: always
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+    ports:
+      - "2181:2181"
+
+  # Kafka Broker
+  kafka:
+    image: bitnami/kafka:latest
+    restart: always
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+    ports:
+      - "9092:9092"
+
+  auth-service:
+    build:
+      context: ./ms-auth
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgrespostgres
+      DATABASE_NAME: postgres
+
+  order-service:
+    build:
+      context: ./ms-orders
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    depends_on:
+      - postgres
+      - kafka
+    environment:
+      HOST_INVENTORY: inventory-service
+      HOST_AUTH: auth-service
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgrespostgres
+      DATABASE_NAME: postgres
+      KAFKA_BROKER: kafka:9092  # Kafka broker connection
+
+  inventory-service:
+    build:
+      context: ./ms-inventory
+      dockerfile: Dockerfile
+    ports:
+      - "3004:3004"
+    depends_on:
+      - postgres
+      - kafka
+    environment:
+      HOST_AUTH: auth-service
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgrespostgres
+      DATABASE_NAME: postgres
+      KAFKA_BROKER: kafka:9092  # Kafka broker connection
+
+  shipping-service:
+    build:
+      context: ./ms-shipping
+      dockerfile: Dockerfile
+    ports:
+      - "3005:3005"
+    depends_on:
+      - postgres
+      - kafka
+    environment:
+      HOST_AUTH: auth-service
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgrespostgres
+      DATABASE_NAME: postgres
+      KAFKA_BROKER: kafka:9092  # Kafka broker connection
+
+volumes:
+  pgdata:
+    driver: local
