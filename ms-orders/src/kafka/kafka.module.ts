@@ -11,17 +11,12 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
           client: {
             brokers: [process.env.KAFKA_BROKER || 'localhost:9092'],
           },
-          producerOnlyMode: true, // Only producing messages
+          producerOnlyMode: true, // ✅ Ensures this module is only producing messages
         },
       },
     ]),
   ],
-  providers: [
-    {
-      provide: 'KAFKA_SERVICE',
-      useExisting: 'KAFKA_SERVICE',
-    },
-  ],
-  exports: ['KAFKA_SERVICE'],
+  providers: [], // ✅ Required even if empty
+  exports: [ClientsModule], // ✅ Export ClientsModule instead of 'KAFKA_SERVICE'
 })
 export class KafkaModule {}
