@@ -8,7 +8,10 @@ export class ShippingService {
   constructor(
     @InjectRepository(Shipment)
     private shipmentRepository: Repository<Shipment>,
+  
   ) {}
+
+  
 
   findAll(): Promise<Shipment[]> {
     return this.shipmentRepository.find();

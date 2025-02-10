@@ -14,6 +14,12 @@ const HOST_INVENTORY = process.env.HOST_INVENTORY || 'localhost';
 const UPDATE_INVENTORY = `http://${HOST_INVENTORY}:3004/inventory`;
 
 console.log(process.env.HOST_AUTH, { UPDATE_INVENTORY });
+
+export interface EventMessage<T = any> {
+  eventType: string;  // e.g., 'order.created', 'shipment.updated'
+  timestamp: string;
+  data: T;
+}
 @Injectable()
 export class OrdersService {
   constructor(
@@ -25,7 +31,13 @@ export class OrdersService {
   async create(orderData: Partial<Order>): Promise<Order> {
     const order = this.ordersRepository.create(orderData);
 
-    await this.kafkaClient.emit('orders', { value: JSON.stringify(order) });
+    const event: EventMessage = {
+      eventType: 'order.created',
+      timestamp: new Date().toISOString(),
+      data: orderData,
+    };
+
+    await this.kafkaClient.emit('orders.created', event);
 
     return this.ordersRepository.save(order);
   }

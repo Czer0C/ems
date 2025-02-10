@@ -1,8 +1,8 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
-import { ShippingModule } from './shipping/shipping.module';
 import { AuthMiddleware } from 'src/middleware/auth.middleware';
+import { ShippingModule } from './shipping/shipping.module';
 dotenv.config(); // Load .env variables
 
 console.log(process.env.DATABASE_HOST || 'postgres');
@@ -21,7 +21,7 @@ console.log(process.env.DATABASE_PASSWORD);
       synchronize: true, // ⚠️ Do not use in production
       // entities: [User],
     }),
-    ShippingModule,
+    ShippingModule
   ],
 })
 export class AppModule implements NestModule {

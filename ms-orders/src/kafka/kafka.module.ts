@@ -9,7 +9,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         transport: Transport.KAFKA,
         options: {
           client: {
-            brokers: [process.env.KAFKA_BROKER || 'localhost:9092'],
+            brokers: ['127.0.0.1:9092'],
           },
           producerOnlyMode: true, // ✅ Ensures this module is only producing messages
         },
