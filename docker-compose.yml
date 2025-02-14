@@ -134,6 +134,3 @@ services:
 volumes:
   pgdata:
     driver: local
-
-env_file:
-  - .env
