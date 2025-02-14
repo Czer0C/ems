@@ -5,9 +5,9 @@ services:
     image: postgres:14
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgrespostgres
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
@@ -17,8 +17,8 @@ services:
     image: dpage/pgadmin4
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@localhost.com
-      PGADMIN_DEFAULT_PASSWORD: 123456
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     ports:
       - "5050:80"
     depends_on:
@@ -30,7 +30,6 @@ services:
     ports:
       - "6379:6379"
 
-  # Zookeeper (Kafka Dependency)
   zookeeper:
     image: bitnami/zookeeper:latest
     restart: always
@@ -39,7 +38,6 @@ services:
     ports:
       - "2181:2181"
 
-  # Kafka Broker
   kafka:
     image: bitnami/kafka:latest
     restart: always
@@ -49,14 +47,11 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENERS: PLAINTEXT://:9092
-      # KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      # KAFKA_ADVERTISED_LISTENERS: ${KAFKA_ADVERTISED_LISTENERS:-PLAINTEXT://localhost:9092}
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://${KAFKA_ADVERTISED_LISTENERS}
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       ALLOW_PLAINTEXT_LISTENER: "yes"
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
       KAFKA_DEFAULT_REPLICATION_FACTOR: "1"
-
     ports:
       - "9092:9092"
     healthcheck:
@@ -75,11 +70,11 @@ services:
       - postgres
       - redis
     environment:
-      DATABASE_HOST: postgres
-      DATABASE_PORT: 5432
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgrespostgres
-      DATABASE_NAME: postgres
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
 
   order-service:
     build:
@@ -91,14 +86,14 @@ services:
       - postgres
       - kafka
     environment:
-      HOST_INVENTORY: inventory-service
-      HOST_AUTH: auth-service
-      DATABASE_HOST: postgres
-      DATABASE_PORT: 5432
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgrespostgres
-      DATABASE_NAME: postgres
-      KAFKA_BROKER: kafka:9092  # Kafka broker connection
+      HOST_INVENTORY: ${HOST_INVENTORY}
+      HOST_AUTH: ${HOST_AUTH}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      KAFKA_BROKER: ${KAFKA_BROKER}
 
   inventory-service:
     build:
@@ -110,13 +105,13 @@ services:
       - postgres
       - kafka
     environment:
-      HOST_AUTH: auth-service
-      DATABASE_HOST: postgres
-      DATABASE_PORT: 5432
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgrespostgres
-      DATABASE_NAME: postgres
-      KAFKA_BROKER: kafka:9092  # Kafka broker connection
+      HOST_AUTH: ${HOST_AUTH}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      KAFKA_BROKER: ${KAFKA_BROKER}
 
   shipping-service:
     build:
@@ -128,14 +123,17 @@ services:
       - postgres
       - kafka
     environment:
-      HOST_AUTH: auth-service
-      DATABASE_HOST: postgres
-      DATABASE_PORT: 5432
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgrespostgres
-      DATABASE_NAME: postgres
-      KAFKA_BROKER: kafka:9092  # Kafka broker connection
+      HOST_AUTH: ${HOST_AUTH}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      KAFKA_BROKER: ${KAFKA_BROKER}
 
 volumes:
   pgdata:
     driver: local
+
+env_file:
+  - .env
