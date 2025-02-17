@@ -100,3 +100,10 @@ This setup defines a microservices architecture using Docker Compose, including 
 - Implement Service Discovery: Use Consul or Eureka to enable dynamic service discovery.
 - Set up Monitoring and Logging: Prometheus and Grafana for monitoring. Set up the ELK stack for centralized logging.
 - CI/CD Integration: Automate testing and deployment using Jenkins or GitLab CI.
+
+## **COMMANDS**:
+```
+kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic orders.created --from-beginning
+
+kafka-topics.sh --bootstrap-server 127.0.0.1:9092 --list
+```
