@@ -1,0 +1,17 @@
+{
+  "packageManager": "npm@11.1.0",
+  "devDependencies": {
+    "turbo": "^2.4.4"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "dev": "turbo run dev",
+    "start:dev": "turbo run start:dev"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
