@@ -39,14 +39,14 @@ This setup defines a microservices architecture using Docker Compose, including 
 
 ### 6. **Auth Service**
 - Custom-built microservice
-- Located in `./ms-auth`
+- Located in `./apps/ms-auth`
 - Exposes port `3002`
 - Depends on PostgreSQL and Redis
 - Uses PostgreSQL as the database
 
 ### 7. **Order Service**
 - Custom-built microservice
-- Located in `./ms-orders`
+- Located in `./apps/ms-orders`
 - Exposes port `3003`
 - Depends on PostgreSQL and Kafka
 - Communicates with `auth-service` and `inventory-service`
@@ -54,7 +54,7 @@ This setup defines a microservices architecture using Docker Compose, including 
 
 ### 8. **Inventory Service**
 - Custom-built microservice
-- Located in `./ms-inventory`
+- Located in `./apps/ms-inventory`
 - Exposes port `3004`
 - Depends on PostgreSQL and Kafka
 - Communicates with `auth-service`
@@ -62,7 +62,7 @@ This setup defines a microservices architecture using Docker Compose, including 
 
 ### 9. **Shipping Service**
 - Custom-built microservice
-- Located in `./ms-shipping`
+- Located in `./apps/ms-shipping`
 - Exposes port `3005`
 - Depends on PostgreSQL and Kafka
 - Communicates with `auth-service`
